@@ -1,7 +1,8 @@
+package projeto_1;
 
 public enum TipoToken {
-	PCDec, PCProg, PCint, PCReal, PCLer, PCImprimir, PCSe, PCEntao, PCEngto, PCIni, PCFim, OpAritMult, OpAritDiv,
-	OpAritSoma, OpAritSub, OpRelMenor, OpRelMenorigual, OpRelMaior, OpRelMaiorigual, OpRellgual, OpRelDif, OpBoolE,
-	OpBoolOu, Delim, Atrib, AbrePar, FechaPar, Var, Numint, NumReal, Cadeia
-
+    PCDec, PCProg, PCint, PCReal, PCLer, PCImprimir, PCSe, PCEntao, PCEnqto, PCIni, PCFim, OpAritMult, OpAritDiv,
+    OpAritSoma, OpAritSub, OpRelMenor, OpRelMenorigual, OpRelMaior, OpRelMaiorigual, OpRellgual, OpRelDif, OpBoolE,
+    OpBoolOu, Delim, Atrib, AbrePar, FechaPar, Var, Numint, NumReal, Cadeia,
+    Error
 }
