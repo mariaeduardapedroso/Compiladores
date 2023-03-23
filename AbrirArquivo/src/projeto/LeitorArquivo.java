@@ -1,4 +1,4 @@
-package projeto_1;
+package projeto;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

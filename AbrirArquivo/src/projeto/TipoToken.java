@@ -1,4 +1,4 @@
-package projeto_1;
+package projeto;
 
 public enum TipoToken {
     PCDec, PCProg, PCint, PCReal, PCLer, PCImprimir, PCSe, PCEntao, PCEnqto, PCIni, PCFim, OpAritMult, OpAritDiv,

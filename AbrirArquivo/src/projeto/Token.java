@@ -1,4 +1,4 @@
-package projeto_1;
+package projeto;
 
 public class Token {
     public TipoToken padrao;
@@ -8,6 +8,12 @@ public class Token {
         this.padrao = p;
         this.lexema = lex;
     }
+	
+	public Token(){
+		this.padrao = null;
+		this.lexema = null;
+	}
+
 
     @Override
     public String toString() {

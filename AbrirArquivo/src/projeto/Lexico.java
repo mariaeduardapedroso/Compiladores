@@ -1,17 +1,50 @@
-package projeto_1;
+package projeto;
+
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 public class Lexico {
     LeitorArquivo ldat;
-    LeitorArquivo buffer;
+    //LeitorArquivo buffer;
 
     public Lexico(String fileName) {
         ldat = new LeitorArquivo(fileName);
     }
 
+	public int verificadorLexico(){
+		Token tokenVerificado = new Token();
+		
+        String aux = "";
+		
+		//??????? nao sei uq to fazeno
+		OutputStream escrita = new FileOutputStream("escrita.txt");
+		
+		for (tokenVerificado = this.proximoToken();
+			 tokenVerificado.lexema != null;
+			 tokenVerificado = this.proximoToken()){
+			
+			if (tokenVerificado.padrao == TipoToken.Error)
+				return -1;
+			
+			//	fazer aqui:
+			//		string + "<\""
+			//		string + padrao
+			//		string + "\", \""
+			//		string + tipo
+			//		string + "\">   "
+			//		imprime string em outro arquivo
+			aux = aux + "<\"" + tokenVerificado.padrao.toString()
+				+ "\", \"" + tokenVerificado.lexema + "\">   ";
+			[imprime aux em saida aqui]
+			
+
+		}
+		return 0;
+	}
+	
     public Token proximoToken(){
         int c;
         int estado = 1;
-        String aux = "";
         
         while ((c = ldat.proxCaractere()) != -1) {
             char caracter = (char) c;
@@ -342,7 +375,7 @@ public class Lexico {
                     break;
                     
                 case 45: //leitura numero int
-                    aux = aux = caracter;
+                    aux = aux + caracter;
                     
                 case 46: //leitura numero float
                     
