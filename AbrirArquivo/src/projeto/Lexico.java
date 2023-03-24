@@ -1,9 +1,7 @@
 package projeto;
 
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-
 public class Lexico {
+
     LeitorArquivo ldat;
     //LeitorArquivo buffer;
 
@@ -11,74 +9,84 @@ public class Lexico {
         ldat = new LeitorArquivo(fileName);
     }
 
-	public int verificadorLexico(){
-		Token tokenVerificado = new Token();
-		
-        String aux = "";
-		
-		//??????? nao sei uq to fazeno
-		OutputStream escrita = new FileOutputStream("escrita.txt");
-		
-		for (tokenVerificado = this.proximoToken();
-			 tokenVerificado.lexema != null;
-			 tokenVerificado = this.proximoToken()){
-			
-			if (tokenVerificado.padrao == TipoToken.Error)
-				return -1;
-			
-			//	fazer aqui:
-			//		string + "<\""
-			//		string + padrao
-			//		string + "\", \""
-			//		string + tipo
-			//		string + "\">   "
-			//		imprime string em outro arquivo
-			aux = aux + "<\"" + tokenVerificado.padrao.toString()
-				+ "\", \"" + tokenVerificado.lexema + "\">   ";
-			[imprime aux em saida aqui]
-			
+    public int verificadorLexico() {
+        Token tokenVerificado = new Token();
 
-		}
-		return 0;
-	}
-	
-    public Token proximoToken(){
+        String tokenString = "";
+
+        for (tokenVerificado = this.proximoToken();
+             tokenVerificado.lexema != null;
+             tokenVerificado = this.proximoToken()) {
+
+            if (tokenVerificado.padrao == TipoToken.Error) {
+                char c = (char) ldat.proxCaractere();
+                while (c != ' ' || c != '\n')
+                    c = (char) ldat.proxCaractere();
+            }
+
+            //	fazer aqui:
+            //		string + "<\""
+            //		string + padrao
+            //		string + "\", \""
+            //		string + tipo
+            //		string + "\">   "
+            //		imprime string em outro arquivo
+            tokenString = tokenString + "<\"" + tokenVerificado.padrao.toString()
+                    + "\", \"" + tokenVerificado.lexema + "\">   ";
+            
+            // <padrao, lexema>     //
+            System.out.println(tokenString);
+        }
+        return 0;
+    }
+
+    public Token proximoToken() {
         int c;
         int estado = 1;
-        
+
+        //casos primarios
         while ((c = ldat.proxCaractere()) != -1) {
             char caracter = (char) c;
-
-            switch(caracter){
-                case ' ': case '\n': case '\t':
+            String stringAux = "";
+            
+            switch (caracter) {
+                case ' ':
+                case '\n':
+                case '\t':
+                    if (estado == 44){
+                        return (new Token(TipoToken.Var, stringAux));
+                    }
+                        
                     estado = 43;
                     break;
                 case '#':
-//                    char caracterAux = (char) c;
-//                    while(caracterAux != '\n'){
-//                        c = ldat.proxCaractere
-//                        
-//                        
-//                        
-//                        caracterAux = (char) c;
-//                    }
-                    
+                    char cAux = (char) c;
+                    while (cAux != '\n') {
+                        c = ldat.proxCaractere();
+                        cAux = (char) c;
+                    }
+                    estado = 1;
+                    break;
                 default:
-                    if (estado != 45){
-                        if (c >= 97 && c <= 122)
-                            estado = 44; //letra
+                    if (estado == 44 || estado == 1) {
+                        if (c >= 97 && c <= 122) { //letra minuscula
+                            stringAux = stringAux + caracter;
+                            estado = 44;
+                        }
                     }
-                    if (estado != 44){
-                        if (c >= 48 && c <= 47)
-                            estado = 45; //numero
+                    else if (estado != 44) {
+                        if (c >= 48 && c <= 57) { //numero
+                            stringAux = stringAux + caracter;
+                            estado = 45;
+                        }
+                    } // se for LETRA MINUSCULA e receber NUMERO
+                    else if (estado == 44 && (c >= 48 && c <= 57)){
+                        stringAux = stringAux + caracter;
                     }
-                    
-//                    // se for LETRA e receber NUMERO
-//                    if (estado == 44 && (c >= 48 && c <= 47))
-//                        
+                        
             }
             
-
+            //casos de tipos de token
             switch (estado) {
                 case 1:
                     switch (caracter) {
@@ -112,13 +120,11 @@ public class Lexico {
                         case '!':
                             estado = 10;
                             break;
-
                         default:
-                        //variavel
+                            //variavel
                             break;
                     }
                     break;
-
                 case 2:
                     switch (caracter) {
                         case '=':
@@ -127,26 +133,22 @@ public class Lexico {
                             estado = 4;
                     }
                     break;
-
                 case 3:
                     //<=
                     return (new Token(TipoToken.OpRelMenorigual, "<="));
-
                 case 4:
                     //<
                     return (new Token(TipoToken.OpRelMenor, "<"));
-
                 case 5:
-                    if (caracter == '=')
+                    if (caracter == '=') {
                         estado = 6;
-                    else
+                    } else {
                         return (new Token(TipoToken.Error, "="));
+                    }
                     break;
-
                 case 6:
                     //==
                     return (new Token(TipoToken.OpRellgual, "=="));
-
                 case 7:
                     switch (caracter) {
                         case '=':
@@ -155,65 +157,64 @@ public class Lexico {
                             estado = 9;
                     }
                     break;
-
                 case 8:
                     return (new Token(TipoToken.OpRelMaiorigual, ">="));
-
                 case 9:
                     return (new Token(TipoToken.OpRelMaior, ">"));
-
                 case 10:
-                    if (caracter == '=')
+                    if (caracter == '=') {
                         estado = 11;
-                    else
+                    } else {
                         return (new Token(TipoToken.Error, "!"));
-
+                    }
                 case 11:
                     return (new Token(TipoToken.OpRelDif, "!="));
-
                 case 12:
-                    if (caracter == 'E')
+                    if (caracter == 'E') {
                         estado = 13;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "D"));
+                    }
                     break;
-
                 case 13:
-                    if (caracter == 'C')
+                    if (caracter == 'C') {
                         estado = 14;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "DE"));
+                    }
                     break;
-
                 case 14:
                     return (new Token(TipoToken.PCDec, "DEC"));
 
                 case 15:
-                    if (caracter == 'R')
+                    if (caracter == 'R') {
                         estado = 16;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "P"));
+                    }
                     break;
 
                 case 16:
-                    if (caracter == 'O')
+                    if (caracter == 'O') {
                         estado = 17;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "PR"));
+                    }
                     break;
 
                 case 17:
-                    if (caracter == 'G')
+                    if (caracter == 'G') {
                         estado = 18;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "PRO"));
+                    }
                     break;
 
                 case 18:
                     return (new Token(TipoToken.PCProg, "PROG"));
 
                 case 19:
-                    switch (caracter){
+                    switch (caracter) {
                         case 'N':
                             estado = 20;
                             break;
@@ -226,7 +227,7 @@ public class Lexico {
                     break;
 
                 case 20:
-                    switch (caracter){
+                    switch (caracter) {
                         case 'I':
                             estado = 21;
                             break;
@@ -245,86 +246,96 @@ public class Lexico {
                     return (new Token(TipoToken.PCint, "INT"));
 
                 case 23:
-                    if (caracter == 'P')
+                    if (caracter == 'P') {
                         estado = 24;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "IM"));
+                    }
                     break;
 
                 case 24:
-                    if (caracter == 'R')
+                    if (caracter == 'R') {
                         estado = 25;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "IMP"));
+                    }
                     break;
 
                 case 25:
-                    if (caracter == 'I')
+                    if (caracter == 'I') {
                         estado = 26;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "IMPR"));
+                    }
                     break;
 
                 case 26:
-                    if (caracter == 'M')
+                    if (caracter == 'M') {
                         estado = 27;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "IMPRI"));
+                    }
                     break;
 
                 case 27:
-                    if (caracter == 'I')
+                    if (caracter == 'I') {
                         estado = 28;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "IMPRIM"));
+                    }
                     break;
 
                 case 28:
-                    if (caracter == 'R')
+                    if (caracter == 'R') {
                         estado = 29;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "IMPRIMI"));
+                    }
                     break;
 
                 case 29:
                     return (new Token(TipoToken.PCImprimir, "IMPRIMIR"));
 
                 case 30:
-                    if (caracter == 'E')
+                    if (caracter == 'E') {
                         estado = 31;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "L"));
+                    }
                     break;
 
                 case 31:
-                    if (caracter == 'R')
+                    if (caracter == 'R') {
                         estado = 32;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "LE"));
+                    }
                     break;
 
                 case 32:
                     return (new Token(TipoToken.PCLer, "LER"));
 
                 case 33:
-                    if (caracter == 'E')
+                    if (caracter == 'E') {
                         estado = 34;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "S"));
+                    }
                     break;
 
                 case 34:
                     return (new Token(TipoToken.PCSe, "SE"));
 
                 case 35:
-                    if (caracter == 'N')
+                    if (caracter == 'N') {
                         estado = 36;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "E"));
+                    }
                     break;
 
                 case 36:
-                    switch (caracter){
+                    switch (caracter) {
                         case 'Q':
                             estado = 37;
                             break;
@@ -337,51 +348,54 @@ public class Lexico {
                     break;
 
                 case 37:
-                    if (caracter == 'T')
+                    if (caracter == 'T') {
                         estado = 38;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "ENQ"));
+                    }
                     break;
 
                 case 38:
-                    if (caracter == 'O')
+                    if (caracter == 'O') {
                         estado = 39;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "ENQT"));
+                    }
                     break;
 
                 case 39:
                     return (new Token(TipoToken.PCEnqto, "ENQTO"));
 
                 case 40:
-                    if (caracter == 'A')
+                    if (caracter == 'A') {
                         estado = 41;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "ENT"));
+                    }
                     break;
 
                 case 41:
-                    if (caracter == 'O')
+                    if (caracter == 'O') {
                         estado = 42;
-                    else 
+                    } else {
                         return (new Token(TipoToken.Error, "ENTA"));
+                    }
                     break;
 
-                case 42: 
+                case 42:
                     return (new Token(TipoToken.PCEntao, "ENTAO"));
-            
-                case 44: //leitura nome variavel
-                    aux = aux + caracter;
-                    break;
-                    
-                case 45: //leitura numero int
-                    aux = aux + caracter;
-                    
-                case 46: //leitura numero float
-                    
-                    
+
+//                case 44: //leitura nome variavel
+//                    aux = aux + caracter;
+//                    break;
+//
+//                case 45: //leitura numero int
+//                    aux = aux + caracter;
+//
+//                case 46: //leitura numero float
+
                 default:
-                    
+
             }
         }
         return null;

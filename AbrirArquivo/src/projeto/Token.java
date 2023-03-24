@@ -9,10 +9,10 @@ public class Token {
         this.lexema = lex;
     }
 	
-	public Token(){
-		this.padrao = null;
-		this.lexema = null;
-	}
+    public Token(){
+        this.padrao = null;
+        this.lexema = null;
+    }
 
 
     @Override

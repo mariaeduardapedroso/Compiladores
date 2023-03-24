@@ -21,12 +21,9 @@ public class Projeto_1 {
 //		}
 
 //		int c;
-		
-		Lexico lexico = new Lexico("programa1.gyh");
-		if (lexico.verificadorLexico() == -1){
-			System.out.println("erro lexico!!");
-		}
-		
+
+        Lexico lexico = new Lexico("programa1.gyh");
+        
     }
     
 }
