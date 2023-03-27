@@ -39,6 +39,8 @@ public class Lexico {
             switch (state) {
                 case 1:
                     switch (charRead) {
+						case ' ': case '\n':
+							break;
 						case ':':
 							state = 43;
 							break;
@@ -122,7 +124,8 @@ public class Lexico {
 								this.tempString = "";
 								this.tempString += this.charRead;
 								state = 47;
-							}
+							} else
+								System.out.print("<Error, \"" + charRead + "\">    ");
                             break;
                     }
                     break;
