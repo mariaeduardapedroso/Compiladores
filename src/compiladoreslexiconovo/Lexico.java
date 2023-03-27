@@ -6,6 +6,7 @@ public class Lexico {
     int charIntRead;
     int  state;
     String tempString;
+	int isReal;
     
     public Lexico(String file_programa1gyh) {
         try{
@@ -18,7 +19,8 @@ public class Lexico {
         
 //        this.charRead = null;
 //        this.charIntRead = null;
-        this. state = 1;
+		this.isReal = 0;
+        this.state = 1;
         this.tempString = "";
     }
     
@@ -33,7 +35,6 @@ public class Lexico {
                 //  state = 1
                 
             this.charRead = (char) this.charIntRead;
-            
 			
             switch (state) {
                 case 1:
@@ -46,7 +47,7 @@ public class Lexico {
 							break;
                         case '#':
                             while ((this.charRead = (char) this.dataRead.nextIntCaracter()) != '\n') {
-								int a = 0;
+								//nada
 							}
                             break;
                         case 'D':
@@ -81,34 +82,20 @@ public class Lexico {
                             break;
 						case 'F':
 							state = 44;
+							break;
                         default:
 							//letra primeiro
 							if (this.charIntRead >= 97 && this.charIntRead <= 122){
 								System.out.print("<Var, \"");
 								System.out.print(this.charRead);
-								while((this.charRead = (char) this.dataRead.nextIntCaracter()) != ' '){
-									if (this.charRead == '\n')
-										break;
-									System.out.print(this.charRead);
-								}
-								System.out.print("\">    ");
+								state = 46;
 							}
 							//numero primeiro
 							else if (this.charIntRead >= 48 && this.charIntRead <= 57){
-								int isReal = 0;
+								isReal = 0;
 								this.tempString = "";
-								while((this.charRead = (char) this.dataRead.nextIntCaracter()) != ' '){
-									if (this.charRead == '\n')
-										break;
-									if (this.charRead == '.')
-										isReal = 1;
-									this.tempString = this.tempString + this.charRead;
-								}
-								
-								if (isReal == 0)
-									System.out.print("<NumInt, \"" + this.tempString + "\">    ");
-								else
-									System.out.print("<NumReal, \"" + this.tempString + "\">    ");
+								this.tempString += this.charRead;
+								state = 47;
 							}
                             break;
                     }
@@ -125,13 +112,13 @@ public class Lexico {
 					
                 case 3:
                     //<=
-                    System.out.print("<OpRelMenorigual, \"<=\">    ");
+                    System.out.print("<OpRelMenorigual, \"<=\">");
 					state = 1;
 					break;
 					
                 case 4:
                     //<
-                    System.out.print("<OpRelMenor, \"<\">    ");
+                    System.out.print("<OpRelMenor, \"<\">");
 					state = 1;
 					break;
 					
@@ -159,12 +146,12 @@ public class Lexico {
                     break;
 					
                 case 8:
-                    System.out.print("<OpRelMaiorigual, \">=\">    ");
+                    System.out.print("<OpRelMaiorigual, \">=\">");
 					state = 1;
 					break;
 					
                 case 9:
-                    System.out.print("<OpRelMaior, \">>\"");
+                    System.out.print("<OpRelMaior, \">>\">");
 					state = 1;
 					break;
 					
@@ -437,7 +424,6 @@ public class Lexico {
 						else{
 							System.out.print("<Error, \":\">    ");
 							this.dataRead = aux;
-							state = 1;
 							break;
 						}
 					}
@@ -446,20 +432,44 @@ public class Lexico {
 				case 44:
 					if (charRead == 'I') {
 						state = 45;
-						break;
 					}
                     else
 						System.out.print("<Error, \"F\">    ");
 					break;
+					
 				case 45:
 					if (charRead == 'M') {
 						System.out.print("<PCFim, \"FIM\">    ");
 						state = 1;
-						break;
 					}
                     else
 						System.out.print("<Error, \"FI\">    ");
 					break;
+					
+				case 46: //letras primeiro
+					if (this.charRead == ' ' || this.charRead == '\n'){
+						System.out.print("\">");
+						state = 1;
+					}
+					else
+						System.out.print(this.charRead);
+					break;
+					
+				case 47: //numeros primeiro
+					if (this.charRead == ' ' || this.charRead == '\n'){
+						if (isReal == 0)
+							System.out.print("<NumInt, \"" + this.tempString + "\">");
+						else
+							System.out.print("<NumReal, \"" + this.tempString + "\">");
+						break;
+					}
+					
+					if (this.charRead == '.')
+						isReal = 1;
+					this.tempString += this.charRead;
+					break;
+
+					
 					
                 default:
 					break;
