@@ -39,9 +39,6 @@ public class Lexico {
             switch (state) {
                 case 1:
                     switch (charRead) {
-						case ' ': case '\n':
-							state = 1;
-							break;
 						case ':':
 							state = 43;
 							break;
@@ -83,11 +80,40 @@ public class Lexico {
 						case 'F':
 							state = 44;
 							break;
+						case '*':
+							System.out.print("<OpAritMult, \"*\">");
+							break;
+						case '"':
+							this.tempString = "";
+							state = 4;
+							break;
+						case '/':
+							System.out.print("<OpAritDiv, \"/\">");
+							break;
+						case 'R':
+							state = 48;
+							break;
+						case '+':
+							System.out.print("<OpAritSoma, \"+\">");
+							break;
+						case '-':
+							System.out.print("<OpAritSub, \"-\">");
+							break;
+						case 'O':
+							state = 11;
+							break;
+						case '(':
+							System.out.print("<AbrePar, \"(\">");
+							break;
+						case ')':
+							System.out.print("<FechaPar, \")\">");
+							break;
+							
                         default:
 							//letra primeiro
 							if (this.charIntRead >= 97 && this.charIntRead <= 122){
-								System.out.print("<Var, \"");
-								System.out.print(this.charRead);
+								this.tempString = "";
+								this.tempString += this.charRead;
 								state = 46;
 							}
 							//numero primeiro
@@ -105,8 +131,11 @@ public class Lexico {
                     switch (charRead) {
                         case '=':
                             state = 3;
+							break;
                         default:
-                            state = 4;
+                            System.out.print("<OpRelMenor, \"<\">");
+							state = 1;
+							break;
                     }
                     break;
 					
@@ -117,31 +146,38 @@ public class Lexico {
 					break;
 					
                 case 4:
-                    //<
-                    System.out.print("<OpRelMenor, \"<\">");
-					state = 1;
+					if (this.charRead == '"'){
+						System.out.print("<Cadeia, \"" + this.tempString + "\">");
+						state = 1;
+						break;
+					}
+					
+					this.tempString += this.charRead;
 					break;
 					
                 case 5:
-                    if (charRead == '=') {
-                        state = 6;
-                    } else {
-                        System.out.print("<Error, \"=>\"");
-                    }
+                    if (charRead == '=')
+						System.out.print("<OpRelIgual, \"==\">");
+					else
+                        System.out.print("<Error, \"=\">");
+					state = 1;
                     break;
 					
                 case 6:
-                    //==
-                    System.out.print("<OpRellgual, \"==>\"");
-					state = 1;
 					break;
 					
                 case 7:
                     switch (charRead) {
                         case '=':
                             state = 8;
-                        default:
+							break;
+						case '>':
                             state = 9;
+							break;
+						default:
+							System.out.print("<OpRelMaior, \">\">");
+							state = 1;
+							break;
                     }
                     break;
 					
@@ -156,15 +192,18 @@ public class Lexico {
 					break;
 					
                 case 10:
-                    if (charRead == '=') {
-                        state = 11;
-                    } else {
+                    if (charRead == '=')
+                        System.out.print("<OpRelDif, \"!=\">    ");
+                    else
                         System.out.print("<Error, \"!\">    ");
-                    }
+                    state = 1;
 					break;
 					
                 case 11:
-                    System.out.print("<OpRelDif, \"!=\">    ");
+					if (charRead == 'U')
+						System.out.print("<OPBoolOu, \"OU\">    ");
+					else 
+						System.out.print("<Error, \"O\">    ");
 					state = 1;
 					break;
 					
@@ -190,11 +229,15 @@ public class Lexico {
 					break;
 
                 case 15:
-                    if (charRead == 'R') {
-                        state = 16;
-                    } else {
-                        System.out.print("<Error, \"P\">    ");
-                    }
+                    switch (charRead){
+						case 'R':
+							state = 16;
+							break;
+						default:
+							System.out.print("<Error, \"P\">    ");
+							state = 1;
+							break;
+					}
                     break;
 
                 case 16:
@@ -342,10 +385,14 @@ public class Lexico {
 					break;
 
                 case 35:
-                    if (charRead == 'N') {
-                        state = 36;
-                    } else {
-                        System.out.print("<Error, \"E\">    ");
+                    switch (charRead){
+						case 'N':
+							state = 36;
+							break;
+						default:
+							System.out.print("<OPBoolE, \"E\">    ");
+							state = 1;
+							break;
                     }
                     break;
 
@@ -359,22 +406,26 @@ public class Lexico {
                             break;
                         default:
                             System.out.print("<Error, \"EN\">    ");
+							state = 1;
+							break;
                     }
                     break;
 
                 case 37:
-                    if (charRead == 'T') {
+                    if (charRead == 'T')
                         state = 38;
-                    } else {
+					else {
                         System.out.print("<Error, \"ENQ\">    ");
+						state = 1;
                     }
                     break;
 
                 case 38:
-                    if (charRead == 'O') {
+                    if (charRead == 'O')
                         state = 39;
-                    } else {
+					else {
                         System.out.print("<Error, \"ENQT\">    ");
+						state = 1;
                     }
                     break;
 
@@ -384,11 +435,12 @@ public class Lexico {
 					break;
 
                 case 40:
-                    if (charRead == 'A') {
+                    if (charRead == 'A')
                         state = 41;
-                    } else {
+					else {
                         System.out.print("<Error, \"ENT\">    ");
-                    }
+						state = 1;
+					}
                     break;
 
                 case 41:
@@ -430,29 +482,30 @@ public class Lexico {
 					break;
 
 				case 44:
-					if (charRead == 'I') {
+					if (charRead == 'I')
 						state = 45;
-					}
-                    else
+					else {
 						System.out.print("<Error, \"F\">    ");
+						state = 1;
+					}
 					break;
 					
 				case 45:
-					if (charRead == 'M') {
+					if (charRead == 'M')
 						System.out.print("<PCFim, \"FIM\">    ");
-						state = 1;
-					}
                     else
 						System.out.print("<Error, \"FI\">    ");
+					state = 1;
 					break;
 					
 				case 46: //letras primeiro
 					if (this.charRead == ' ' || this.charRead == '\n'){
-						System.out.print("\">");
+						System.out.print("<Var, \"" + this.tempString + "\"> ");
 						state = 1;
+						break;
 					}
-					else
-						System.out.print(this.charRead);
+					
+					this.tempString += this.charRead;
 					break;
 					
 				case 47: //numeros primeiro
@@ -461,6 +514,7 @@ public class Lexico {
 							System.out.print("<NumInt, \"" + this.tempString + "\">");
 						else
 							System.out.print("<NumReal, \"" + this.tempString + "\">");
+						state = 1;
 						break;
 					}
 					
@@ -468,7 +522,32 @@ public class Lexico {
 						isReal = 1;
 					this.tempString += this.charRead;
 					break;
+					
+				case 48: //Real
+					if (charRead == 'E')
+						state = 49;
+					else {
+						System.out.print("<Error, \"R\">    ");
+						state = 1;
+					}
+					break;
+					
+				case 49: //REal
+					if (charRead == 'A')
+						state = 50;
+					else {
+						System.out.print("<Error, \"RE\">    ");
+						state = 1;
+					}
+					break;
 
+				case 50:
+					if (charRead == 'L')
+						System.out.print("<PCReal, \"REAL\">");
+					else 
+						System.out.print("<Error, \"REA\">    ");
+					state = 1;
+					break;
 					
 					
                 default:
