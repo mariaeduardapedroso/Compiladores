@@ -26,7 +26,7 @@ public class Main {
 		
 		objLexico.printaListaTokens();
 		
-		Semantico semantico = new Semantico(programa, objLexico.listaTokens);
-		semantico.verificadorSemantico();
+		Sintatico sintatico = new Sintatico(programa, objLexico.listaTokens);
+		sintatico.verificadorSintatico();
     }
 }
