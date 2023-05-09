@@ -1,4 +1,4 @@
-#Programa nao tem erro sintático
+#Erro sintático: 'Inesperado Token: FechaPar' ou 'Inesperado Lexema: )' 
 
 :DEC
 num1:INT
@@ -13,7 +13,7 @@ LER num2
 LER num3
 SE num1 > num2 ENTAO
    INI
-      aux := 2+3-4+5-6*5-1
+      aux := 2+3-4+5)-6*5-1
       num2 := num1
       num1 := aux
    FIM 

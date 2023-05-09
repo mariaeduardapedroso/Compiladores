@@ -78,29 +78,42 @@ public class Sintatico {
 
     //Programa → ':' 'DEC' ListaDeclaracoes ':' 'PROG' ListaComandos;
     void programa() {
-        if (listaTokens.get(index).tipo == tipoToken.Delim)
+        if (listaTokens.get(index).tipo == tipoToken.Delim){
+            System.out.println("[programa] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else
-            System.exit(2);
+        }
+        else{
+            ERROSINTATICO();
+        }
         
-        if (listaTokens.get(index).tipo == tipoToken.PCDec)
+        if (listaTokens.get(index).tipo == tipoToken.PCDec){
+            System.out.println("[programa] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else
-            System.exit(2);
+        }
+        else{
+            ERROSINTATICO();
+        }
         
         listaDeclaracoes();
         
-        if (listaTokens.get(index).tipo == tipoToken.Delim)
+        if (listaTokens.get(index).tipo == tipoToken.Delim){
+            System.out.println("[programa] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else
-            System.exit(2);
-            
-        if (listaTokens.get(index).tipo == tipoToken.PCProg)
-            index++;
-        else
-            System.exit(2);
+        }
+        else{
+            ERROSINTATICO();
+        }
         
-        System.out.println("\nSintatico verificado completamente!!\n");
+            
+        if (listaTokens.get(index).tipo == tipoToken.PCProg){
+            System.out.println("[programa] lido: " + listaTokens.get(index).tipo + ", index: " + index);
+            index++;
+        }
+        else{
+            ERROSINTATICO();
+        }
+        
+        listaComandos();
     }
 
     //ListaDeclaracoes → Declaracao ListaDeclaracoes2;
@@ -111,33 +124,47 @@ public class Sintatico {
     
     //ListaDeclaracoes2 → ListaDeclaracoes | e;
     void listaDeclaracoes2() {
-        if (listaTokens.get(index).tipo == tipoToken.Var)
+        if (listaTokens.get(index).tipo == tipoToken.Var){
             listaDeclaracoes();
+        }
     }
 
     //Declaracao → VARIAVEL ':' TipoVar;
     void declaracao() {
-        if (listaTokens.get(index).tipo == tipoToken.Var)
+        if (listaTokens.get(index).tipo == tipoToken.Var){
+            System.out.println("[declaracao] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
         
-        if (listaTokens.get(index).tipo == tipoToken.Delim)
+        if (listaTokens.get(index).tipo == tipoToken.Delim){
+            System.out.println("[declaracao] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
         
         tipoVar();
     }
 
     //TipoVar → 'INT' | 'REAL';
     void tipoVar() {
-        if (listaTokens.get(index).tipo == tipoToken.NumInt)
+        if (listaTokens.get(index).tipo == tipoToken.PCint){
+            System.out.println("[tipoVar] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else if (listaTokens.get(index).tipo == tipoToken.NumReal)
-            index++;
-        else 
-            System.exit(2);
+        }
+        else{
+            if (listaTokens.get(index).tipo == tipoToken.PCReal){
+                System.out.println("[tipoVar] lido: " + listaTokens.get(index).tipo + ", index: " + index);
+                index++;
+            }
+            else {
+                ERROSINTATICO();
+            }
+        }
     }
 
     //ExpressaoAritmetica → TermoAritmetico ExpressaoAritmetica2;
@@ -152,6 +179,7 @@ public class Sintatico {
             case OpAritSoma:
             case OpAritSub:
                 expressaoAritmetica();
+                System.out.println("[expressaoAritmetica2] lido: " + listaTokens.get(index).tipo + ", index: " + index);
                 index++;
                 break;
             default:
@@ -172,6 +200,7 @@ public class Sintatico {
             case OpAritDiv:
                 fatorAritmetico();
                 termoAritmetico2();
+                System.out.println("[termoAritmetico2] lido: " + listaTokens.get(index).tipo + ", index: " + index);
                 index++;
                 break;
             default:
@@ -185,20 +214,27 @@ public class Sintatico {
             case NumInt:
             case NumReal:
             case Var:
+                System.out.println("[fatorAritmetico] lido: " + listaTokens.get(index).tipo + ", index: " + index);
                 index++;
                 break;
             case AbrePar:
+                System.out.println("[fatorAritmetico] lido: " + listaTokens.get(index).tipo + ", index: " + index);
                 index++;
                 expressaoAritmetica();
                 
-                if (listaTokens.get(index).tipo == tipoToken.FechaPar)
+                if (listaTokens.get(index).tipo == tipoToken.FechaPar){
+                    System.out.println("[fatorAritmetico] lido: " + listaTokens.get(index).tipo + ", index: " + index);
                     index++;
-                else 
-                    System.exit(2);
+                }
+                else {
+                    ERROSINTATICO();
+                }
+                
    
                 break;
             default:
-                System.exit(2);
+                ERROSINTATICO();
+                break;
         }
     }
 
@@ -218,29 +254,62 @@ public class Sintatico {
         }
     }
 
-    //TermoRelacional → ExpressaoAritmetica OP_REL ExpressaoAritmetica | '(' ExpressaoRelacional ')';
+    //TermoRelacional → ExpressaoAritmetica OP_REL ExpressaoAritmetica;
+    //TermoRelacional → '(' ExpressaoRelacional ')';
     void termoRelacional() {
-        
-        
         switch(listaTokens.get(index).tipo){
             case NumInt:
             case NumReal:
             case Var:
-            case AbrePar:
-				index++;
-				switch(listaTokens.get(index).tipo){
-					expressaoAritmetica(){
-						switch (op  relacionais);
-						expressaoAritmetica();
-					}
-					//ou
-					expressaoRelacional(){
-						tipoToken.FechaPar;
-					}
-				}
+                System.out.println("[termoRelacional] lido: " + listaTokens.get(index).tipo + ", index: " + index);
+                index++;
+                switch(listaTokens.get(index).tipo){
+                    case OpRelMenorigual:
+                    case OpRelIgual:
+                    case OpRelMaior:
+                    case OpRelMaiorigual:
+                    case OpRelDif:
+                    case OpRelMenor:
+                        System.out.println("[termoRelacional] lido: " + listaTokens.get(index).tipo + ", index: " + index);
+                        index++;
+                        expressaoAritmetica();
+                        break;
+                        
+                    default:
+                        ERROSINTATICO();
+                        break;
+                }
                 break;
-			default:
-				System.exit(2);
+                
+            case AbrePar:
+                System.out.println("[termoRelacional] lido: " + listaTokens.get(index).tipo + ", index: " + index);
+                index++;
+                switch(listaTokens.get(index).tipo){
+                    case OpRelMenorigual:
+                    case OpRelIgual:
+                    case OpRelMaior:
+                    case OpRelMaiorigual:
+                    case OpRelDif:
+                    case OpRelMenor:
+                        System.out.println("[termoRelacional] lido: " + listaTokens.get(index).tipo + ", index: " + index);
+                        index++;
+                        expressaoAritmetica();
+                        break;
+                    default:
+                        expressaoRelacional();
+                        System.out.println("[termoRelacional] lido: " + listaTokens.get(index).tipo + ", index: " + index);
+                        index++;
+                        
+                        if (listaTokens.get(index).tipo == tipoToken.FechaPar){
+                            System.out.println("[termoRelacional] lido: " + listaTokens.get(index).tipo + ", index: " + index);
+                            index++;
+                        }
+                        else{
+                            ERROSINTATICO();
+                        }
+                        
+                        break;
+                }
         }
     }
         
@@ -249,10 +318,13 @@ public class Sintatico {
         switch(listaTokens.get(index).tipo){
             case OPBoolE:
             case OPBoolOu:
+                System.out.println("[operadorBooleano] lido: " + listaTokens.get(index).tipo + ", index: " + index);
                 index++;
                 break;
             default:
-                System.exit(2);
+                ERROSINTATICO();
+                break;
+                
         }
     }
 
@@ -271,6 +343,7 @@ public class Sintatico {
             case PCEnqto:
             case PCIni:
                 listaComandos();
+                break;
             default:
                 break;
         }
@@ -283,56 +356,85 @@ public class Sintatico {
     void comando(){
         tipoToken aux = listaTokens.get(index).tipo;
         
-        if (aux == tipoToken.Var)
-            comandoAtribuicao();
-        else if (aux == tipoToken.PCLer)
-            comandoEntrada();
-        else if (aux == tipoToken.PCImprimir)
-            comandoSaida();
-        else if (aux == tipoToken.PCSe)
-            comandoCondicao();
-        else if (aux == tipoToken.PCEnqto)
-            comandoRepeticao();
-        else if (aux == tipoToken.PCIni)
-            subAlgoritmo();
-        else
-            System.exit(2);
+        switch(aux){
+            case Var:
+                comandoAtribuicao();
+                break;
+            case PCLer:
+                comandoEntrada();
+                break;
+            case PCImprimir:
+                comandoSaida();
+                break;
+            case PCSe:
+                comandoCondicao();
+                break;
+            case PCEnqto:
+                comandoRepeticao();
+                break;
+            case PCIni:
+                subAlgoritmo();
+                break;
+            default:
+                ERROSINTATICO();
+                break;
+        }
     }
 
     //ComandoAtribuicao → VARIAVEL ':=' ExpressaoAritmetica;
     void comandoAtribuicao(){
-        if (listaTokens.get(index).tipo == tipoToken.Var)
+        if (listaTokens.get(index).tipo == tipoToken.Var){
+            System.out.println("[comandoAtribuicao] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
         
-        if (listaTokens.get(index).tipo == tipoToken.Atrib)
+        
+        if (listaTokens.get(index).tipo == tipoToken.Atrib){
+            System.out.println("[comandoAtribuicao] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
+        
         
         expressaoAritmetica();
     }
 
     //ComandoEntrada → 'LER' VARIAVEL;
     void comandoEntrada(){
-        if (listaTokens.get(index).tipo == tipoToken.PCLer)
+        if (listaTokens.get(index).tipo == tipoToken.PCLer){
+            System.out.println("[comandoEntrada] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
         
-        if (listaTokens.get(index).tipo == tipoToken.Var)
+        
+        if (listaTokens.get(index).tipo == tipoToken.Var){
+            System.out.println("[comandoEntrada] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
+        
     }
 
     //ComandoSaida → 'IMPRIMIR' ComandoSaida2;
     void comandoSaida(){
-        if (listaTokens.get(index).tipo == tipoToken.PCImprimir)
+        if (listaTokens.get(index).tipo == tipoToken.PCImprimir){
+            System.out.println("[comandoSaida] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
+        
         
         comandoSaida2();
     }
@@ -341,26 +443,36 @@ public class Sintatico {
         switch (listaTokens.get(index).tipo){
             case Var:
             case Cadeia:
+                System.out.println("[comandoSaida2] lido: " + listaTokens.get(index).tipo + ", index: " + index);
                 index++;
                 break;
             default:
-                System.exit(2);
+                ERROSINTATICO();
+                break;
         }
     }
 
     //ComandoCondicao → 'SE' ExpressaoRelacional 'ENTAO' Comando ComandoCondicao2;
     void comandoCondicao(){
-        if (listaTokens.get(index).tipo == tipoToken.PCSe)
+        if (listaTokens.get(index).tipo == tipoToken.PCSe){
+            System.out.println("[comandoCondicao] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
+        
         
         expressaoRelacional();
         
-        if (listaTokens.get(index).tipo == tipoToken.PCEntao)
+        if (listaTokens.get(index).tipo == tipoToken.PCEntao){
+            System.out.println("[comandoCondicao] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
+        
         
         comando();
         comandoCondicao2();
@@ -369,6 +481,7 @@ public class Sintatico {
     void comandoCondicao2(){
         switch(listaTokens.get(index).tipo){
             case PCSenao:
+                System.out.println("[comandoCondicao2] lido: " + listaTokens.get(index).tipo + ", index: " + index);
                 index++;
                 comando();
             default:
@@ -378,10 +491,14 @@ public class Sintatico {
 
     //ComandoRepeticao → 'ENQTO' ExpressaoRelacional Comando;
     void comandoRepeticao(){
-        if (listaTokens.get(index).tipo == tipoToken.PCEnqto)
+        if (listaTokens.get(index).tipo == tipoToken.PCEnqto){
+            System.out.println("[comandoRepeticao] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
+        
         
         expressaoRelacional();
         comando();
@@ -389,16 +506,34 @@ public class Sintatico {
 
     //SubAlgoritmo → 'INI' ListaComandos 'FIM';
     void subAlgoritmo(){
-        if (listaTokens.get(index).tipo == tipoToken.PCIni)
+        if (listaTokens.get(index).tipo == tipoToken.PCIni){
+            System.out.println("[subAlgoritmo] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
+        
         
         listaComandos();
         
-        if (listaTokens.get(index).tipo == tipoToken.PCFim)
+        if (listaTokens.get(index).tipo == tipoToken.PCFim){
+            System.out.println("[subAlgoritmo] lido: " + listaTokens.get(index).tipo + ", index: " + index);
             index++;
-        else 
-            System.exit(2);
+        }
+        else {
+            ERROSINTATICO();
+        }
+        
+    }
+    
+    
+    
+    
+    
+    
+    void ERROSINTATICO(){
+        System.out.println("\n\nErro sintático: " + listaTokens.get(index).tipo + " inesperado no index " + index + "!\n\n");
+        System.exit(2);
     }
 }
