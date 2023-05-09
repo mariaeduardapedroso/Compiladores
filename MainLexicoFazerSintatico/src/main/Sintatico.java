@@ -221,27 +221,27 @@ public class Sintatico {
     //TermoRelacional → ExpressaoAritmetica OP_REL ExpressaoAritmetica | '(' ExpressaoRelacional ')';
     void termoRelacional() {
         
-        ??????????
-//        switch(listaTokens.get(index).tipo){
-//            case NumInt:
-//            case NumReal:
-//            case Var:
-//            case AbrePar: 
-//                expressaoAritmetica(){
-//                    switch (op  relacionais);
-//                    expressaoAritmetica();
-//                }
-//                //ou
-//                expressaoRelacional();
-//                
-//                break;
-//            
-//        }
-//        //ou
-//        tipoToken.AbrePar{
-//                
-//            tipoToken.FechaPar;
-//        }
+        
+        switch(listaTokens.get(index).tipo){
+            case NumInt:
+            case NumReal:
+            case Var:
+            case AbrePar:
+				index++;
+				switch(listaTokens.get(index).tipo){
+					expressaoAritmetica(){
+						switch (op  relacionais);
+						expressaoAritmetica();
+					}
+					//ou
+					expressaoRelacional(){
+						tipoToken.FechaPar;
+					}
+				}
+                break;
+			default:
+				System.exit(2);
+        }
     }
         
     //OperadorBooleano → 'E' | 'OU';
