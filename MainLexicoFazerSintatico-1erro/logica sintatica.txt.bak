@@ -1,0 +1,47 @@
+		Programa → ':' 'DEC' ListaDeclaracoes ':' 'PROG' ListaComandos;
+	ListaDeclaracoes → Declaracao ListaDeclaracoes | Declaracao;
+Declaracao → VARIAVEL ':' TipoVar;
+TipoVar → 'INT' | 'REAL';
+
+ExpressaoAritmetica → ExpressaoAritmetica '+' TermoAritmetico | ExpressaoAritmetica '-' TermoAritmetico | TermoAritmetico;
+TermoAritmetico → TermoAritmetico '*' FatorAritmetico | TermoAritmetico '/' FatorAritmetico | FatorAritmetico;
+FatorAritmetico → NUMINT| NUMREAL | VARIAVEL | '(' ExpressaoAritmetica ')'
+ExpressaoRelacional → ExpressaoRelacional OperadorBooleano TermoRelacional | TermoRelacional;
+TermoRelacional → ExpressaoAritmetica OP_REL ExpressaoAritmetica | '(' ExpressaoRelacional ')';
+OperadorBooleano → 'E' | 'OU';
+
+ListaComandos → Comando ListaComandos | Comando;
+
+	Comando → ComandoAtribuicao | ComandoEntrada | ComandoSaida | ComandoCondicao | ComandoRepeticao | SubAlgoritmo;
+ComandoAtribuicao → VARIAVEL ':=' ExpressaoAritmetica;
+ComandoEntrada → 'LER' VARIAVEL;
+ComandoSaida → 'IMPRIMIR'  VARIAVEL | 'IMPRIMIR' CADEIA;
+ComandoCondicao → 'SE' ExpressaoRelacional 'ENTAO' Comando | 'SE' ExpressaoRelacional 'ENTAO' Comando 'SENAO' Comando;
+ComandoRepeticao → 'ENQTO' ExpressaoRelacional Comando;
+SubAlgoritmo → 'INI' ListaComandos 'FIM';
+
+######################
+		Programa → ':' 'DEC' ListaDeclaracoes ':' 'PROG' ListaComandos;
+	ListaDeclaracoes → Declaracao ListaDeclaracoes | Declaracao;
+Declaracao → VARIAVEL ':' TipoVar;
+TipoVar → 'INT' | 'REAL';
+
+ExpressaoAritmetica → TermoAritmetico ExpressaoAritmetica2;
+ExpressaoAritmetica2 → '+' TermoAritmetico | '-' TermoAritmetico | e;
+TermoAritmetico → FatorAritmetico TermoAritmetico2;
+TermoAritmetico2 → '*' FatorAritmetico | '/' FatorAritmetico | e;
+FatorAritmetico → NUMINT | NUMREAL | VARIAVEL | '(' ExpressaoAritmetica ')'
+ExpressaoRelacional → TermoRelacional ExpressaoRelacional2;
+ExpressaoRelacional2 → OperadorBooleano TermoRelacional | e;
+TermoRelacional → ExpressaoAritmetica OP_REL ExpressaoAritmetica | '(' ExpressaoRelacional ')';
+OperadorBooleano → 'E' | 'OU';
+
+ListaComandos → Comando ListaComandos | Comando;
+
+	Comando → ComandoAtribuicao | ComandoEntrada | ComandoSaida | ComandoCondicao | ComandoRepeticao | SubAlgoritmo;
+ComandoAtribuicao → VARIAVEL ':=' ExpressaoAritmetica;
+ComandoEntrada → 'LER' VARIAVEL;
+ComandoSaida → 'IMPRIMIR'  VARIAVEL | 'IMPRIMIR' CADEIA;
+ComandoCondicao → 'SE' ExpressaoRelacional 'ENTAO' Comando | 'SE' ExpressaoRelacional 'ENTAO' Comando 'SENAO' Comando;
+ComandoRepeticao → 'ENQTO' ExpressaoRelacional Comando;
+SubAlgoritmo → 'INI' ListaComandos 'FIM';
