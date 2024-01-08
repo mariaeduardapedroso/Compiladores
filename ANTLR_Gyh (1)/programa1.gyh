@@ -1,0 +1,26 @@
+#Programa nao tem erro lexico
+
+:DEC
+parametro:INT
+fatorial:INT
+fato:REAL
+
+
+:PROG 
+# Calcula o fatorial de um número inteiro
+LER parametro
+IMPRIMIR fatorial
+
+parametro:= 10
+
+SE fatorial>fato E parametro <=0 ENTAO       
+ INI
+	fatorial:= fato+parametro
+	fato:= fato+parametro
+	parametro:= 0	
+ FIM
+SENAO
+ INI
+	fato:= fato+parametro
+ FIM
+
