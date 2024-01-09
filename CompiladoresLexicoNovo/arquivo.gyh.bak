@@ -1,3 +1,17 @@
-#Programa nao tem erro lexico
-# Calcula o fatorial de um número inteiro
-DEC
+#Erro Léxico: <_> caractere desconhecido
+
+:DEC
+:INT
+:INT
+
+:PROG 
+# Calcula o  de um número inteiro
+LER 
+ := 
+SE  == 0 ENTAO  := 1
+ENQTO  > 1
+INI
+ :=  * ( _ 1)
+ :=  - 1
+ IMPRIMIR
+IMPRIMIR "Oi"

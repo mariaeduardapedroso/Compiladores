@@ -8,6 +8,7 @@ public class Lexico {
 	int state;
 	String tempString;
 	int isReal;
+	LeitorArquivo aux;
 
 	public Lexico(String file_programa1gyh) {
 		try {
@@ -25,31 +26,26 @@ public class Lexico {
 	}
 
 	public void verificadorLexico() {
-
-		while ((this.charIntRead = this.dataRead.nextIntCaracter()) != -1) {
-			// charintread -> charread
-			// verificaçao de  state
-			// switch
-			// TODAS
-			// printa lexico <bagulhere, aeasd>
-			//  state = 1
+		int termino = 0;
+		while (termino != 1) {
+			this.charIntRead = this.dataRead.nextIntCaracter();
 
 			this.charRead = (char) this.charIntRead;
-
+			
+			//System.out.println("estado = " + state + ", caracterint = " + charIntRead);
+			
 			switch (state) {
-				
 				case 1:
 					switch (charRead) {
 						case ' ':
 						case '\n':
 							break;
 						case ':':
-							state = 43;
+							state = 70;
+							aux = this.dataRead; //rollback on pointer
 							break;
 						case '#':
-							while ((this.charRead = (char) this.dataRead.nextIntCaracter()) != '\n') {
-								//nada
-							}
+							state = 100;
 							break;
 						case 'D':
 							state = 12;
@@ -225,16 +221,16 @@ public class Lexico {
 					break;
 
 				case 13:
-					if (charRead == 'C') {
+					if (charRead == 'C')
 						state = 14;
-					} else {
+					else {
 						System.out.println("<Error, \"DE\">    ");
 						state = 1;
 					}
 					break;
 
 				case 14:
-					System.out.println("<PCDec, \"DEC\">    ");
+					System.out.println("<PCDec, \"DEC\">");
 					state = 1;
 					break;
 
@@ -470,27 +466,16 @@ public class Lexico {
 					state = 1;
 					break;
 
-				case 43:
-					LeitorArquivo aux = this.dataRead; //rollback on pointer
-
-					while ((this.charRead = (char) dataRead.nextIntCaracter()) != '\n') {
-						//:
-						if (charRead != '=') {
-							System.out.println("<Delim, \":\">    ");
-							this.dataRead = aux;
-							state = 1;
-							break;
-						} //:=
-						else if (charRead == '=') {
-							System.out.println("<Atrib, \":=\">    ");
-							state = 1;
-							break;
-						} else {
-							System.out.println("<Error, \":\">    ");
-							this.dataRead = aux;
-							break;
-						}
-					}
+				case 70:
+					//:
+					if (charRead == '=') 
+						System.out.println("<Atrib, \":=\">    ");
+					else if (charRead != ' ')
+						System.out.println("<Delim, \":\">    ");
+					else
+						System.out.println("<Error, \":\">    ");
+					this.dataRead = aux;
+					state = 1;
 					break;
 
 				case 44:
@@ -512,9 +497,11 @@ public class Lexico {
 					break;
 
 				case 46: //letras primeiro
-					if (this.charRead == ' ' || this.charRead == '\n') {
+					if (this.charRead == ' ' || this.charRead == '\n' || this.charRead == ':') {
 						System.out.println("<Var, \"" + this.tempString + "\"> ");
 						state = 1;
+						if (this.charRead == ':')
+							
 						break;
 					}
 
@@ -522,7 +509,7 @@ public class Lexico {
 					break;
 
 				case 47: //numeros primeiro
-					if (this.charRead == ' ' || this.charRead == '\n') {
+					if (this.charRead == ' ' || this.charRead == '\n' || this.charIntRead >= 58 || this.charIntRead <= 47) {
 						if (isReal == 0) {
 							System.out.println("<NumInt, \"" + this.tempString + "\">");
 						} else {
@@ -530,7 +517,7 @@ public class Lexico {
 						}
 						state = 1;
 						break;
-					}
+					} // 1)
 
 					if (this.charRead == '.') {
 						isReal = 1;
@@ -564,10 +551,18 @@ public class Lexico {
 					}
 					state = 1;
 					break;
+					
+				case 100:
+					if (charRead == '\n')
+						state = 1;
+					break;
 
 				default:
 					break;
 			}
+			
+			if (charIntRead == -1)
+				termino = 1;
 		}
 	}
 }
